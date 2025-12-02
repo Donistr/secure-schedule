@@ -5,6 +5,8 @@ import org.example.client.service.InternetService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.time.LocalDateTime;
 
 @Service
@@ -29,7 +31,31 @@ public class InternetServiceImpl implements InternetService {
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
-        //runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -eq 'Disabled'} | Enable-NetAdapter -Confirm:$false");
+        /*runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -eq 'Disabled'} | Enable-NetAdapter -Confirm:$false");
+        waitInternetAccess();*/
+    }
+
+    private void waitInternetAccess() {
+        boolean available = false;
+        while (!available) {
+            System.out.println(LocalDateTime.now());
+            System.out.println("try");
+            available = isInternetAvailable();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean isInternetAvailable() {
+        try (DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10053);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     private void runCommand(String... command) {
