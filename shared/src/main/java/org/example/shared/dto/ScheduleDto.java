@@ -29,9 +29,13 @@ public record ScheduleDto(
         validation();
     }
 
-    public void validation() {
+    private void validation() {
         if (from == null || to == null || from.isAfter(to)) {
             throw new IncorrectScheduleException("from == null || to == null || from.isAfter(to)");
+        }
+
+        if (!to.isAfter(LocalDateTime.now())) {
+            throw new IncorrectScheduleException("!to.isAfter(LocalDateTime.now())");
         }
 
         LocalDateTime previousEnd = null;
