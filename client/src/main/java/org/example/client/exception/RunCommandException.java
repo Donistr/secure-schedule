@@ -1,5 +1,7 @@
 package org.example.client.exception;
 
+import org.example.shared.exception.BaseException;
+
 public class RunCommandException extends BaseException {
 
     public RunCommandException() {

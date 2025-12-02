@@ -1,4 +1,4 @@
-package org.example.client.dto;
+package org.example.shared.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;

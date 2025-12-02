@@ -1,6 +1,6 @@
 package org.example.client.controller;
 
-import org.example.client.exception.BaseException;
+import org.example.shared.exception.BaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

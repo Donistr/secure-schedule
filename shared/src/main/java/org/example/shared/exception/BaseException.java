@@ -1,4 +1,4 @@
-package org.example.client.exception;
+package org.example.shared.exception;
 
 public class BaseException extends RuntimeException {
 

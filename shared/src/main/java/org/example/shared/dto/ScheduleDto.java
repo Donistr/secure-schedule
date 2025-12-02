@@ -1,8 +1,8 @@
-package org.example.client.dto;
+package org.example.shared.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
-import org.example.client.exception.IncorrectScheduleException;
+import org.example.shared.exception.IncorrectScheduleException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package org.example.client.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.client.service.ScheduleService;
-import org.example.client.dto.ScheduleDto;
+import org.example.shared.dto.ScheduleDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

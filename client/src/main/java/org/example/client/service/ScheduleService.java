@@ -1,6 +1,6 @@
 package org.example.client.service;
 
-import org.example.client.dto.ScheduleDto;
+import org.example.shared.dto.ScheduleDto;
 
 public interface ScheduleService {
 

@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.client.service.InternetService;
 import org.example.client.service.QueueTaskSchedulerService;
 import org.example.client.service.ScheduleService;
-import org.example.client.dto.ScheduleDto;
-import org.example.client.dto.TimePeriodDto;
+import org.example.shared.dto.ScheduleDto;
+import org.example.shared.dto.TimePeriodDto;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
