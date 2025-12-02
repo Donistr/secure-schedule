@@ -13,8 +13,6 @@ public class ClientApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ClientApplication.class, args);
-        while (true){
-        }
         //disableInternet();
         //enableInternet();
         //System.out.println(getActiveInterfaceName());

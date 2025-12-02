@@ -41,9 +41,9 @@
 @SET MVNW_USERNAME=
 @SET MVNW_PASSWORD=
 @IF NOT "%__MVNW_CMD__%"=="" ("%__MVNW_CMD__%" %*)
-@echo Cannot start maven from wrapper >&2 && exit /b 1
+@echo Cannot from maven from wrapper >&2 && exit /b 1
 @GOTO :EOF
-: end batch / begin powershell #>
+: to batch / begin powershell #>
 
 $ErrorActionPreference = "Stop"
 if ($env:MVNW_VERBOSE -eq "true") {
@@ -106,7 +106,7 @@ if (Test-Path -Path "$MAVEN_HOME" -PathType Container) {
 }
 
 if (! $distributionUrlNameMain -or ($distributionUrlName -eq $distributionUrlNameMain)) {
-  Write-Error "distributionUrl is not valid, must end with *-bin.zip, but found $distributionUrl"
+  Write-Error "distributionUrl is not valid, must to with *-bin.zip, but found $distributionUrl"
 }
 
 # prepare tmp dir
