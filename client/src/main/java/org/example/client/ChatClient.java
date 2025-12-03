@@ -1,5 +1,6 @@
 package org.example.client;
 
+import jakarta.validation.constraints.NotNull;
 import org.example.shared.dto.MessageDto;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -37,7 +38,7 @@ public class ChatClient {
         stompClient.setMessageConverter(new JacksonJsonMessageConverter());
 
         // Создаём сессию
-        StompSessionHandlerAdapter handler = new MySessionHandler();
+        StompSessionHandlerAdapter handler = new MySessionHandler(name);
 
         StompHeaders connectHeaders = new StompHeaders();
         //connectHeaders.add("name", name);
@@ -83,18 +84,17 @@ public class ChatClient {
         System.exit(0);
     }
 
-    static class MySessionHandler extends StompSessionHandlerAdapter {
+    private static class MySessionHandler extends StompSessionHandlerAdapter {
 
-        /*private final String myName;
+        private final String myName;
 
         public MySessionHandler(String myName) {
             this.myName = myName;
-        }*/
+        }
 
         @Override
         public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
             session.subscribe("/user/queue/messages", this);
-            System.out.println("Готов к приёму сообщений...");
         }
 
         @Override
@@ -105,7 +105,13 @@ public class ChatClient {
         @Override
         public void handleFrame(StompHeaders headers, Object payload) {
             MessageDto msg = (MessageDto) payload;
-            System.out.printf("\n%s: %s\n> ", msg.from(), msg.content());
+
+            String from = msg.from();
+            if (from.equals(myName)) {
+                System.out.printf("\nYou -> %s: %s\n> ", msg.to(), msg.content());
+            }
+
+            System.out.printf("\n%s: %s\n> ", from, msg.content());
         }
 
         @Override
@@ -113,6 +119,7 @@ public class ChatClient {
                                     Throwable exception) {
             exception.printStackTrace();
         }
+
     }
 
 }

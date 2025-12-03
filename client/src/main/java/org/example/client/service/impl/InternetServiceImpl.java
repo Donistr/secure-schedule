@@ -1,7 +1,11 @@
 package org.example.client.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.example.client.internet.InternetState;
 import org.example.client.exception.RunCommandException;
+import org.example.client.internet.InternetStateChangedEvent;
 import org.example.client.service.InternetService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -10,29 +14,55 @@ import java.net.InetAddress;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class InternetServiceImpl implements InternetService {
 
+    private final ApplicationEventPublisher eventPublisher;
+
+    private InternetState state;
+
     @Override
-    public void disableInternet() {
+    public synchronized void disableInternet() {
         System.out.printf("%s - интернет выключен%n", LocalDateTime.now());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
+
         //runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -ne 'Disabled'} | Disable-NetAdapter -Confirm:$false");
+        changeState(InternetState.DISABLED);
     }
 
     @Override
-    public void enableInternet() {
+    public synchronized void enableInternet() {
         System.out.printf("%s - интернет включен%n", LocalDateTime.now());
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
+
         /*runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -eq 'Disabled'} | Enable-NetAdapter -Confirm:$false");
         waitInternetAccess();*/
+        changeState(InternetState.ENABLED);
+    }
+
+    @Override
+    public InternetState getState() {
+        return state;
+    }
+
+    private void runCommand(String... command) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(command);
+            Process p = pb.start();
+            p.waitFor();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (IOException e) {
+            throw new RunCommandException(e);
+        }
     }
 
     private void waitInternetAccess() {
@@ -58,16 +88,13 @@ public class InternetServiceImpl implements InternetService {
         }
     }
 
-    private void runCommand(String... command) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder(command);
-            Process p = pb.start();
-            p.waitFor();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (IOException e) {
-            throw new RunCommandException(e);
+    private void changeState(InternetState newState) {
+        if (newState == state) {
+            return;
         }
+
+        eventPublisher.publishEvent(new InternetStateChangedEvent(this, newState));
+        state = newState;
     }
 
 }
