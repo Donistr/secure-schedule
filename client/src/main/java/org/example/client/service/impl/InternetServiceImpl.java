@@ -23,6 +23,10 @@ public class InternetServiceImpl implements InternetService {
 
     @Override
     public synchronized void disableInternet() {
+        if (state == InternetState.DISABLED) {
+            return;
+        }
+
         System.out.printf("%s - интернет выключен%n", LocalDateTime.now());
         try {
             Thread.sleep(2000);
@@ -36,6 +40,10 @@ public class InternetServiceImpl implements InternetService {
 
     @Override
     public synchronized void enableInternet() {
+        if (state == InternetState.ENABLED) {
+            return;
+        }
+
         System.out.printf("%s - интернет включен%n", LocalDateTime.now());
         try {
             Thread.sleep(2000);

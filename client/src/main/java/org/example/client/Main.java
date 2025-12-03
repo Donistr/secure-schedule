@@ -2,13 +2,9 @@ package org.example.client;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.example.client.service.ScheduleService;
 import org.example.client.service.impl.ChatService;
-import org.example.shared.dto.ScheduleDto;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -16,8 +12,6 @@ import java.util.Scanner;
 public class Main {
 
     private final ChatService chatService;
-
-    private final ScheduleService scheduleService;
 
     @PostConstruct
     private void postConstruct() {
@@ -33,7 +27,6 @@ public class Main {
             try {
                 String line = scanner.nextLine();
                 if ("exit".equalsIgnoreCase(line)) {
-                    scheduleService.setSchedule(new ScheduleDto(LocalDateTime.now(), LocalDateTime.now().plusMinutes(1), List.of()));
                     System.exit(0);
                 }
 

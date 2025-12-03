@@ -7,54 +7,43 @@ import org.example.client.service.QueueTaskSchedulerService;
 import org.example.client.service.ScheduleService;
 import org.example.shared.dto.ScheduleDto;
 import org.example.shared.dto.TimePeriodDto;
-import org.springframework.http.client.ReactorClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
 
-    private static final String CLIENT_NAME = "1";
-
-    private static final long REQUEST_TIMEOUT_SECONDS = 5;
-
-    private static final long BETWEEN_TRIES_TO_GET_NEW_SCHEDULE_SECONDS = 60;
-
     private final InternetService internetService;
 
     private final QueueTaskSchedulerService queueTaskSchedulerService;
 
-    private final RestClient client = createClient();
-
-    private RestClient createClient() {
-        ReactorClientHttpRequestFactory factory = new ReactorClientHttpRequestFactory();
-        factory.setConnectTimeout(Duration.ofSeconds(REQUEST_TIMEOUT_SECONDS));
-        factory.setReadTimeout(Duration.ofSeconds(REQUEST_TIMEOUT_SECONDS));
-
-        return RestClient.builder()
-                .requestFactory(factory)
-                .baseUrl("http://127.0.0.1:8080")
-                .build();
-    }
-
     @PostConstruct
     private void postConstruct() {
-        scheduleGettingSchedule(LocalDateTime.now());
+        internetService.disableInternet();
+
+        LocalDateTime time = LocalDateTime.now().plusSeconds(30);
+        setSchedule(new ScheduleDto(
+                time,
+                time.plusMinutes(5),
+                new ArrayList<>(List.of(
+                        new TimePeriodDto(time.plusSeconds(30), time.plusMinutes(1)),
+                        new TimePeriodDto(time.plusMinutes(1).plusSeconds(50), time.plusMinutes(2).plusSeconds(10)),
+                        new TimePeriodDto(time.plusMinutes(3), time.plusMinutes(3).plusSeconds(45)),
+                        new TimePeriodDto(time.plusMinutes(4), time.plusMinutes(4).plusSeconds(20))
+                ))
+        ));
     }
 
     @Override
     public synchronized void setSchedule(ScheduleDto scheduleDto) {
-        scheduleDto.internetActivePeriods().removeIf(period -> !period.to().isAfter(LocalDateTime.now()));
-
         queueTaskSchedulerService.cancelAllTasks();
         internetService.disableInternet();
+        scheduleDto.internetActivePeriods().removeIf(period -> !period.to().isAfter(LocalDateTime.now()));
         scheduleActivePeriods(scheduleDto);
-        scheduleGettingSchedule(scheduleDto.to());
     }
 
     private void scheduleActivePeriods(ScheduleDto scheduleDto) {
@@ -62,48 +51,6 @@ public class ScheduleServiceImpl implements ScheduleService {
             queueTaskSchedulerService.scheduleTaskAt(period.from(), internetService::enableInternet);
             queueTaskSchedulerService.scheduleTaskAt(period.to(), internetService::disableInternet);
         }
-    }
-
-    private void scheduleGettingSchedule(LocalDateTime dateTime) {
-        queueTaskSchedulerService.scheduleTaskAt(dateTime, this::scheduleTryGetScheduleFromServer);
-    }
-
-    private void scheduleTryGetScheduleFromServer() {
-        Optional<ScheduleDto> schedule = Optional.empty();
-        internetService.enableInternet();
-        for (int i = 0; i < 3 && schedule.isEmpty(); ++i) {
-            schedule = tryGetScheduleFromServer();
-        }
-        internetService.disableInternet();
-
-        if (schedule.isEmpty()) {
-            queueTaskSchedulerService.scheduleTaskAt(
-                    LocalDateTime.now().plusSeconds(BETWEEN_TRIES_TO_GET_NEW_SCHEDULE_SECONDS),
-                    this::scheduleTryGetScheduleFromServer
-            );
-
-            return;
-        }
-
-        setSchedule(schedule.get());
-    }
-
-    private Optional<ScheduleDto> tryGetScheduleFromServer() {
-        try {
-            ScheduleDto result = client.get()
-                    .uri(uriBuilder ->
-                            uriBuilder.path("/api/schedule")
-                                    .queryParam("name", CLIENT_NAME)
-                                    .build()
-                    )
-                    .retrieve()
-                    .body(ScheduleDto.class);
-
-            return Optional.ofNullable(result);
-        } catch (Exception ignored) {
-        }
-
-        return Optional.empty();
     }
 
 }
