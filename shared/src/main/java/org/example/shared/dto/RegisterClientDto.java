@@ -1,10 +1,11 @@
 package org.example.shared.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record RegisterClientDto(
-        @JsonProperty("name")
         @NotNull String name
 ) {
 }

@@ -1,5 +1,6 @@
 package org.example.server.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.server.service.ScheduleService;
 import org.example.shared.dto.ScheduleDto;
@@ -25,7 +26,7 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createSchedule(@RequestParam("name") String name, @RequestBody ScheduleDto scheduleDto) {
+    public ResponseEntity<Void> createSchedule(@RequestParam("name") String name, @Valid @RequestBody ScheduleDto scheduleDto) {
         scheduleService.set(name, scheduleDto);
 
         return ResponseEntity.status(HttpStatus.OK).build();

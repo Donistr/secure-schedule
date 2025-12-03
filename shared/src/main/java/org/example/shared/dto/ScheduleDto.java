@@ -1,20 +1,24 @@
 package org.example.shared.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.example.shared.exception.IncorrectScheduleException;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ScheduleDto(
-        @JsonProperty("from")
-        @NotNull LocalDateTime from,
-        @JsonProperty("to")
-        @NotNull LocalDateTime to,
-        @JsonProperty("internet_active_periods")
-        @NotNull List<TimePeriodDto> internetActivePeriods
+        @NotNull
+        LocalDateTime from,
+        @NotNull
+        LocalDateTime to,
+        @NotNull
+        @Valid
+        List<TimePeriodDto> internetActivePeriods
 ) {
 
     public ScheduleDto(LocalDateTime from, LocalDateTime to, List<TimePeriodDto> internetActivePeriods) {

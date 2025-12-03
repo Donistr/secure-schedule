@@ -4,11 +4,13 @@ import jakarta.validation.constraints.NotNull;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
-import java.time.LocalDateTime;
-
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record TimePeriodDto(
-        @NotNull LocalDateTime from,
-        @NotNull LocalDateTime to
+public record MessageDto(
+        @NotNull
+        String from,
+        @NotNull
+        String to,
+        @NotNull
+        String content
 ) {
 }
