@@ -36,7 +36,10 @@ public class ChatService {
     public void handleInternetStateChange(InternetStateChangedEvent event) {
         switch (event.getCurrentState()) {
             case ENABLED -> client = createClient();
-            case DISABLED -> client = Optional.empty();
+            case DISABLED -> {
+                client.ifPresent(ChatClient::disconnect);
+                client = Optional.empty();
+            }
         }
     }
 

@@ -49,6 +49,10 @@ public class ChatClient {
         System.out.println("Connected");
     }
 
+    public void disconnect() {
+        session.disconnect();
+    }
+
     public void sendMessage(MessageDto message) {
         try {
             session.send(SEND_MESSAGE_DESTINATION, message);

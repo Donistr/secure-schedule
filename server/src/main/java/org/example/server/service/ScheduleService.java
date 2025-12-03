@@ -1,6 +1,7 @@
 package org.example.server.service;
 
 import jakarta.annotation.PostConstruct;
+import org.example.server.exception.ScheduleNotFoundException;
 import org.example.shared.dto.ScheduleDto;
 import org.example.shared.dto.TimePeriodDto;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class ScheduleService {
     @PostConstruct
     private void postConstruct() {
         LocalDateTime time = LocalDateTime.now();
+        //LocalDateTime time = LocalDateTime.of(2025, 12, 3, 12, 42, 0);
         nameToSchedule.put("1", new ScheduleDto(
                 time,
                 time.plusMinutes(5),
@@ -37,6 +39,39 @@ public class ScheduleService {
                         new TimePeriodDto(time.plusMinutes(2), time.plusMinutes(2).plusSeconds(10))
                 )
         ));
+    }
+
+    public boolean isIntersectsNow(String name1, String name2) {
+        ScheduleDto schedule1 = nameToSchedule.get(name1);
+        if (schedule1 == null) {
+            throw new ScheduleNotFoundException(String.format("расписание для %s не найдено", name1));
+        }
+
+        ScheduleDto schedule2 = nameToSchedule.get(name2);
+        if (schedule2 == null) {
+            throw new ScheduleNotFoundException(String.format("расписание для %s не найдено", name2));
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (!schedule1.from().isBefore(now)) {
+            System.out.println(111);
+            return false;
+        }
+        if (!schedule2.from().isBefore(now)) {
+            System.out.println(222);
+            return false;
+        }
+
+        if (!schedule1.to().isAfter(now)) {
+            System.out.println(333);
+            return false;
+        }
+        if (!schedule2.to().isAfter(now)) {
+            System.out.println(444);
+            return false;
+        }
+
+        return true;
     }
 
     public ScheduleDto get(String name) {
