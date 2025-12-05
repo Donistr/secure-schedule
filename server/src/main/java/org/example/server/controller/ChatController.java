@@ -1,7 +1,9 @@
 package org.example.server.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.server.exception.UnavailableNowException;
+import org.example.server.exception.MessagingUnavailableNowException;
+import org.example.server.exception.UserNotOnlineException;
+import org.example.server.service.UserService;
 import org.example.server.service.ScheduleService;
 import org.example.shared.dto.MessageDto;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,44 +16,37 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
 
+    private final UserService userService;
+
     private final ScheduleService scheduleService;
 
     @MessageMapping("/chat")
-    public void sendPrivate(MessageDto message) {
-        try {
-            if (!scheduleService.isIntersectsNow(message.from(), message.to())) {
-                throw new UnavailableNowException("Расписания клиентов не пересекаются в текущий момент времени");
-            }
-        } catch (Exception e) {
-            MessageDto outgoing = new MessageDto(
-                    "server",
-                    message.from(),
-                    String.format("ошибка: %s", e.getMessage())
-            );
+    public void sendMessage(MessageDto message) {
+        String from = message.from();
+        String to = message.to();
 
-            messagingTemplate.convertAndSendToUser(
-                    message.from(),
-                    "/queue/messages",
-                    outgoing
-            );
+        if (!userService.isUserOnline(to)) {
+            throw new UserNotOnlineException("Пользователь, которому вы пытаетесь отправить сообщение не в сети");
+        }
 
-            return;
+        if (!scheduleService.isIntersectsNow(from, to)) {
+            throw new MessagingUnavailableNowException("Расписания клиентов не пересекаются в текущий момент времени");
         }
 
         MessageDto outgoing = new MessageDto(
-                message.from(),
-                message.to(),
+                from,
+                to,
                 message.content()
         );
 
         messagingTemplate.convertAndSendToUser(
-                message.to(),
+                to,
                 "/queue/messages",
                 outgoing
         );
 
         messagingTemplate.convertAndSendToUser(
-                message.from(),
+                from,
                 "/queue/messages",
                 outgoing
         );

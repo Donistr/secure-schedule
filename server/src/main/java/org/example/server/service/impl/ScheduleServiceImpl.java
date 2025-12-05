@@ -46,12 +46,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     public boolean isIntersectsNow(String name1, String name2) {
         ScheduleDto schedule1 = nameToSchedule.get(name1);
         if (schedule1 == null) {
-            throw new ScheduleNotFoundException(String.format("расписание для %s не найдено", name1));
+            throw new ScheduleNotFoundException(String.format("Расписание для %s не найдено", name1));
         }
 
         ScheduleDto schedule2 = nameToSchedule.get(name2);
         if (schedule2 == null) {
-            throw new ScheduleNotFoundException(String.format("расписание для %s не найдено", name2));
+            throw new ScheduleNotFoundException(String.format("Расписание для %s не найдено", name2));
         }
 
         LocalDateTime now = LocalDateTime.now();

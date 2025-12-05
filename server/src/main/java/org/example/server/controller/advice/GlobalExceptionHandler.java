@@ -1,4 +1,4 @@
-package org.example.server.controller;
+package org.example.server.controller.advice;
 
 import org.example.shared.exception.BaseException;
 import org.springframework.http.HttpStatus;
