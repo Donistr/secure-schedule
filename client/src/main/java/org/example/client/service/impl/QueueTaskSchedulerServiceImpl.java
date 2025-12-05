@@ -1,18 +1,15 @@
 package org.example.client.service.impl;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.example.client.service.QueueTaskSchedulerService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,61 +17,84 @@ import java.util.concurrent.atomic.AtomicLong;
 @Scope("prototype")
 public class QueueTaskSchedulerServiceImpl implements QueueTaskSchedulerService {
 
+    private record ScheduledTask(
+            long triggerTimeMillis,
+            long sequenceId,
+            Runnable runnable
+    ) implements Delayed {
+
+        @Override
+        public long getDelay(TimeUnit unit) {
+            long now = System.currentTimeMillis();
+            return unit.convert(Math.max(0, triggerTimeMillis - now), TimeUnit.MILLISECONDS);
+        }
+
+        @Override
+        public int compareTo(Delayed o) {
+            ScheduledTask other = (ScheduledTask) o;
+            int timeCmp = Long.compare(this.triggerTimeMillis, other.triggerTimeMillis);
+            if (timeCmp != 0) {
+                return timeCmp;
+            }
+            return Long.compare(this.sequenceId, other.sequenceId);
+        }
+
+    }
+
     private static final ZoneId TIME_ZONE = ZoneId.systemDefault();
 
-    private static final long CLEANUP_TIME_TO_ORDER_MAP_DELAY_MILLIS = 1500;
+    private final AtomicLong sequence = new AtomicLong(0);
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true);
-        return t;
-    });
+    private final DelayQueue<ScheduledTask> delayQueue = new DelayQueue<>();
 
-    private final Set<Future<?>> scheduledFutures = ConcurrentHashMap.newKeySet();
+    private Thread workerThread;
 
-    private final ConcurrentMap<Long, AtomicLong> timeToOrder = new ConcurrentHashMap<>();
+    private boolean running = true;
+
+    @PostConstruct
+    private void init() {
+        startWorkerThread();
+    }
+
+    @PreDestroy
+    private void destroy() {
+        running = false;
+        cancelAllTasks();
+    }
 
     @Override
     public void scheduleTaskAt(LocalDateTime dateTime, Runnable task) {
-        long nowMillis = LocalDateTime.now().atZone(TIME_ZONE).toInstant().toEpochMilli();
         long targetMillis = dateTime.atZone(TIME_ZONE).toInstant().toEpochMilli();
+        long sequenceId = sequence.getAndIncrement();
 
-        long delayMillis = targetMillis - nowMillis;
-        if (delayMillis < 0) {
-            delayMillis = 0;
-        }
-
-        AtomicLong orderCounter = timeToOrder.computeIfAbsent(targetMillis, k -> new AtomicLong(0));
-        if (orderCounter.longValue() == 0) {
-            scheduler.schedule(() ->
-                            timeToOrder.remove(targetMillis),
-                    delayMillis + CLEANUP_TIME_TO_ORDER_MAP_DELAY_MILLIS,
-                    TimeUnit.MILLISECONDS
-            );
-        }
-
-        delayMillis += orderCounter.getAndIncrement();
-
-        CompletableFuture<Void> future = CompletableFuture.runAsync(
-                () -> {
-                    try {
-                        task.run();
-                    } catch (Throwable ignored) {
-                        Thread.currentThread().interrupt();
-                    }
-                },
-                CompletableFuture.delayedExecutor(delayMillis, TimeUnit.MILLISECONDS, scheduler)
-        );
-        future.thenRun(() -> scheduledFutures.remove(future));
-
-        scheduledFutures.add(future);
+        ScheduledTask scheduledTask = new ScheduledTask(targetMillis, sequenceId, task);
+        delayQueue.offer(scheduledTask);
     }
 
     @Override
     public void cancelAllTasks() {
-        scheduledFutures.forEach(f -> f.cancel(true));
-        scheduledFutures.clear();
-        timeToOrder.clear();
+        delayQueue.clear();
+        workerThread.interrupt();
+        startWorkerThread();
+    }
+
+    private void runWorker() {
+        while (running) {
+            try {
+                ScheduledTask task = delayQueue.take();
+                task.runnable.run();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    private void startWorkerThread() {
+        workerThread = new Thread(this::runWorker);
+        workerThread.setDaemon(true);
+        workerThread.start();
     }
 
 }
