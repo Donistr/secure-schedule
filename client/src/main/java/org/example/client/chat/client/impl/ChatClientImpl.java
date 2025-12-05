@@ -1,5 +1,6 @@
 package org.example.client.chat.client.impl;
 
+import org.example.client.Config;
 import org.example.client.chat.client.ChatClient;
 import org.example.client.exception.ChatConnectionFailedException;
 import org.example.shared.dto.MessageDto;
@@ -14,22 +15,18 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ChatClientImpl implements ChatClient {
 
-    private final String serverSendMessageDestination;
+    private final Config config;
 
     private final StompSession session;
 
-    public ChatClientImpl(URI serverWebsocketConnectUri,
-                          String serverSendMessageDestination,
-                          StompSessionHandlerAdapter sessionHandler
-    ) {
+    public ChatClientImpl(Config config, StompSessionHandlerAdapter sessionHandler) {
         try {
-            this.serverSendMessageDestination = serverSendMessageDestination;
+            this.config = config;
 
             List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
             SockJsClient sockJsClient = new SockJsClient(transports);
@@ -38,7 +35,7 @@ public class ChatClientImpl implements ChatClient {
             stompClient.setMessageConverter(new JacksonJsonMessageConverter());
 
             CompletableFuture<StompSession> sessionFuture = stompClient.connectAsync(
-                    serverWebsocketConnectUri,
+                    config.serverWebsocketConnectUri(),
                     new WebSocketHttpHeaders(),
                     new StompHeaders(),
                     sessionHandler
@@ -60,7 +57,7 @@ public class ChatClientImpl implements ChatClient {
     @Override
     public void sendMessage(MessageDto message) {
         try {
-            session.send(serverSendMessageDestination, message);
+            session.send(config.serverSendMessageDestination(), message);
         } catch (Exception e) {
             throw new ChatConnectionFailedException(e);
         }

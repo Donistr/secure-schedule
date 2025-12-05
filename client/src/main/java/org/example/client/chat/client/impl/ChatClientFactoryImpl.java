@@ -14,10 +14,7 @@ public class ChatClientFactoryImpl implements ChatClientFactory {
 
     @Override
     public ChatClient create() {
-        return new ChatClientImpl(
-                config.serverWebsocketConnectUri(),
-                config.serverSendMessageDestination(),
-                new SessionHandler(config.serverSubscriptionDestination(), config.clientName())
+        return new ChatClientImpl(config, new SessionHandler(config)
         );
     }
 

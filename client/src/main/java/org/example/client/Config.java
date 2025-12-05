@@ -9,7 +9,7 @@ import java.net.URI;
 public record Config(
         String serverScheme,
         String serverHost,
-        String serverPort,
+        Integer serverPort,
         String serverWebsocketClientNameQueryParamName,
         String serverWebsocketDestination,
         String serverSendMessageDestination,

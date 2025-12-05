@@ -1,11 +1,15 @@
 package org.example.client.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import org.example.client.Config;
 import org.example.client.chat.client.ChatClient;
 import org.example.client.chat.client.ChatClientFactory;
 import org.example.client.exception.ChatConnectionFailedException;
+import org.example.client.internet.InternetState;
 import org.example.client.internet.InternetStateChangedEvent;
 import org.example.client.service.ChatService;
+import org.example.client.service.InternetService;
 import org.example.shared.dto.MessageDto;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -14,24 +18,27 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    private final String clientName;
+    private final Config config;
+
+    private final InternetService internetService;
 
     private final ChatClientFactory chatClientFactory;
 
-    private Optional<ChatClient> client = Optional.empty();
-
-    public ChatServiceImpl(Config config, ChatClientFactory chatClientFactory) {
-        this.clientName = config.clientName();
-        this.chatClientFactory = chatClientFactory;
-    }
+    private volatile Optional<ChatClient> client = Optional.empty();
 
     @Override
+    @Synchronized
     public void sendMessage(String receiverName, String message) {
+        if (internetService.getState() == InternetState.ENABLED && client.isEmpty()) {
+            client = createClient();
+        }
+
         client.orElseThrow(() -> new ChatConnectionFailedException("Connection failed"))
                 .sendMessage(new MessageDto(
-                        clientName,
+                        config.clientName(),
                         receiverName,
                         message
                 ));
@@ -39,6 +46,7 @@ public class ChatServiceImpl implements ChatService {
 
     @EventListener
     @Async
+    @Synchronized
     public void handleInternetStateChange(InternetStateChangedEvent event) {
         switch (event.getCurrentState()) {
             case ENABLED -> client = createClient();

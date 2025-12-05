@@ -1,6 +1,7 @@
 package org.example.server.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.server.config.Config;
 import org.example.server.exception.MessagingUnavailableNowException;
 import org.example.server.exception.UserNotOnlineException;
 import org.example.server.service.UserService;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
+
+    private final Config config;
 
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -41,13 +44,13 @@ public class ChatController {
 
         messagingTemplate.convertAndSendToUser(
                 to,
-                "/queue/messages",
+                config.websocketDestination(),
                 outgoing
         );
 
         messagingTemplate.convertAndSendToUser(
                 from,
-                "/queue/messages",
+                config.websocketDestination(),
                 outgoing
         );
     }

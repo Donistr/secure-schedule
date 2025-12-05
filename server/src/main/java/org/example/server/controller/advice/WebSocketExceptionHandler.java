@@ -1,6 +1,7 @@
 package org.example.server.controller.advice;
 
 import lombok.RequiredArgsConstructor;
+import org.example.server.config.Config;
 import org.example.shared.dto.MessageDto;
 import org.example.shared.exception.BaseException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -13,6 +14,8 @@ import java.security.Principal;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class WebSocketExceptionHandler {
+
+    private final Config config;
 
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -41,7 +44,7 @@ public class WebSocketExceptionHandler {
 
         messagingTemplate.convertAndSendToUser(
                 userName,
-                "/queue/messages",
+                config.websocketDestination(),
                 errorDto
         );
     }

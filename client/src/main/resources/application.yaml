@@ -8,7 +8,7 @@ server:
 app:
   server-scheme: "http"
   server-host: "127.0.0.1"
-  server-port: "8080"
+  server-port: 8080
   server-websocket-client-name-query-param-name: "name"
   server-websocket-destination: "/ws"
   server-send-message-destination: "/api/chat"
