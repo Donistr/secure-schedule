@@ -2,6 +2,7 @@ package org.example.client.service.impl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import lombok.SneakyThrows;
 import org.example.client.service.QueueTaskSchedulerService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -47,19 +51,26 @@ public class QueueTaskSchedulerServiceImpl implements QueueTaskSchedulerService 
 
     private final DelayQueue<ScheduledTask> delayQueue = new DelayQueue<>();
 
-    private Thread workerThread;
+    private final ExecutorService worker = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+    });
+
+    private volatile Future<?> currentFuture;
 
     private boolean running = true;
 
     @PostConstruct
     private void init() {
-        startWorkerThread();
+        startLoop();
     }
 
     @PreDestroy
     private void destroy() {
         running = false;
         cancelAllTasks();
+        worker.shutdownNow();
     }
 
     @Override
@@ -74,27 +85,21 @@ public class QueueTaskSchedulerServiceImpl implements QueueTaskSchedulerService 
     @Override
     public void cancelAllTasks() {
         delayQueue.clear();
-        workerThread.interrupt();
-        startWorkerThread();
+        currentFuture.cancel(true);
+        sequence.set(0);
+        startLoop();
     }
 
-    private void runWorker() {
+    @SneakyThrows
+    private void runLoop() {
         while (running) {
-            try {
-                ScheduledTask task = delayQueue.take();
-                task.runnable.run();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            } catch (Throwable ignored) {
-            }
+            ScheduledTask task = delayQueue.take();
+            task.runnable.run();
         }
     }
 
-    private void startWorkerThread() {
-        workerThread = new Thread(this::runWorker);
-        workerThread.setDaemon(true);
-        workerThread.start();
+    private void startLoop() {
+        currentFuture = worker.submit(this::runLoop);
     }
 
 }

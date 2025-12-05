@@ -31,7 +31,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 time,
                 time.plusMinutes(5),
                 new ArrayList<>(List.of(
-                        new TimePeriodDto(time, time.plusMinutes(1)),
+                        new TimePeriodDto(time.plusSeconds(30), time.plusMinutes(1)),
                         new TimePeriodDto(time.plusMinutes(1).plusSeconds(50), time.plusMinutes(2).plusSeconds(10)),
                         new TimePeriodDto(time.plusMinutes(3), time.plusMinutes(3).plusSeconds(45)),
                         new TimePeriodDto(time.plusMinutes(4), time.plusMinutes(4).plusSeconds(20))
