@@ -1,4 +1,4 @@
-package org.example.server.config;
+package org.example.server.config.socket;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

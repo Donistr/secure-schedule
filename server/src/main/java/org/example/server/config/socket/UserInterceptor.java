@@ -1,4 +1,4 @@
-package org.example.server.config;
+package org.example.server.config.socket;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;

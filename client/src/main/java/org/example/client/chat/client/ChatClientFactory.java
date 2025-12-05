@@ -1,12 +1,7 @@
 package org.example.client.chat.client;
 
-import org.springframework.stereotype.Component;
+public interface ChatClientFactory {
 
-@Component
-public class ChatClientFactory {
-
-    public ChatClient create(String clientName) {
-        return new ChatClient(new SessionHandler(clientName), clientName);
-    }
+    ChatClient create(String clientName);
 
 }

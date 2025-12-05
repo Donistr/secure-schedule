@@ -5,6 +5,7 @@ import org.example.client.chat.client.ChatClient;
 import org.example.client.chat.client.ChatClientFactory;
 import org.example.client.exception.ChatConnectionFailedException;
 import org.example.client.internet.InternetStateChangedEvent;
+import org.example.client.service.ChatService;
 import org.example.shared.dto.MessageDto;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ChatService {
+public class ChatServiceImpl implements ChatService {
 
     private final static String CLIENT_NAME = "1";
 
@@ -22,6 +23,7 @@ public class ChatService {
 
     private Optional<ChatClient> client = Optional.empty();
 
+    @Override
     public void sendMessage(String receiverName, String message) {
         client.orElseThrow(() -> new ChatConnectionFailedException("Connection failed"))
                 .sendMessage(new MessageDto(

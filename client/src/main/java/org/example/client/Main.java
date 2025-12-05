@@ -2,7 +2,7 @@ package org.example.client;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.example.client.service.impl.ChatService;
+import org.example.client.service.ChatService;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;

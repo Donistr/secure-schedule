@@ -1,8 +1,7 @@
-package org.example.client.chat.client;
+package org.example.client.chat.client.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.shared.dto.MessageDto;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;

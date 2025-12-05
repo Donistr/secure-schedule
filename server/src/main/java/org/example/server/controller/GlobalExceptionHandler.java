@@ -12,14 +12,14 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(RuntimeException ex) {
+    public ResponseEntity<Map<String, Object>> handle(RuntimeException ex) {
         Map<String, Object> body = Map.of("error", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(BaseException ex) {
+    public ResponseEntity<Map<String, Object>> handle(BaseException ex) {
         Map<String, Object> body = Map.of("error", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
