@@ -14,21 +14,23 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ChatClientImpl implements ChatClient {
 
-    private static final String URL = "http://127.0.0.1:8080/ws";
-
-    private static final String SEND_MESSAGE_DESTINATION = "/api/chat";
+    private final String serverSendMessageDestination;
 
     private final StompSession session;
 
-    public ChatClientImpl(StompSessionHandlerAdapter sessionHandler, String clientName) {
+    public ChatClientImpl(URI serverWebsocketConnectUri,
+                          String serverSendMessageDestination,
+                          StompSessionHandlerAdapter sessionHandler
+    ) {
         try {
+            this.serverSendMessageDestination = serverSendMessageDestination;
+
             List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
             SockJsClient sockJsClient = new SockJsClient(transports);
 
@@ -36,7 +38,7 @@ public class ChatClientImpl implements ChatClient {
             stompClient.setMessageConverter(new JacksonJsonMessageConverter());
 
             CompletableFuture<StompSession> sessionFuture = stompClient.connectAsync(
-                    URL + "?name=" + URLEncoder.encode(clientName, StandardCharsets.UTF_8),
+                    serverWebsocketConnectUri,
                     new WebSocketHttpHeaders(),
                     new StompHeaders(),
                     sessionHandler
@@ -58,7 +60,7 @@ public class ChatClientImpl implements ChatClient {
     @Override
     public void sendMessage(MessageDto message) {
         try {
-            session.send(SEND_MESSAGE_DESTINATION, message);
+            session.send(serverSendMessageDestination, message);
         } catch (Exception e) {
             throw new ChatConnectionFailedException(e);
         }

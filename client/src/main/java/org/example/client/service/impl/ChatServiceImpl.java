@@ -1,6 +1,6 @@
 package org.example.client.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import org.example.client.Config;
 import org.example.client.chat.client.ChatClient;
 import org.example.client.chat.client.ChatClientFactory;
 import org.example.client.exception.ChatConnectionFailedException;
@@ -14,20 +14,24 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    private final static String CLIENT_NAME = "1";
+    private final String clientName;
 
     private final ChatClientFactory chatClientFactory;
 
     private Optional<ChatClient> client = Optional.empty();
 
+    public ChatServiceImpl(Config config, ChatClientFactory chatClientFactory) {
+        this.clientName = config.clientName();
+        this.chatClientFactory = chatClientFactory;
+    }
+
     @Override
     public void sendMessage(String receiverName, String message) {
         client.orElseThrow(() -> new ChatConnectionFailedException("Connection failed"))
                 .sendMessage(new MessageDto(
-                        CLIENT_NAME,
+                        clientName,
                         receiverName,
                         message
                 ));
@@ -47,7 +51,7 @@ public class ChatServiceImpl implements ChatService {
 
     private Optional<ChatClient> createClient() {
         try {
-            return Optional.of(chatClientFactory.create(CLIENT_NAME));
+            return Optional.of(chatClientFactory.create());
         } catch (Exception ignored) {
         }
 

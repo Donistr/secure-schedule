@@ -11,13 +11,13 @@ import java.lang.reflect.Type;
 @RequiredArgsConstructor
 public class SessionHandler extends StompSessionHandlerAdapter {
 
-    private static final String SUBSCRIPTION_DESTINATION = "/user/queue/messages";
+    private final String serverSubscriptionDestination;
 
     private final String clientName;
 
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-        session.subscribe(SUBSCRIPTION_DESTINATION, this);
+        session.subscribe(serverSubscriptionDestination, this);
     }
 
     @Override
@@ -36,11 +36,5 @@ public class SessionHandler extends StompSessionHandlerAdapter {
             System.out.printf("%s: %s\n", from, msg.content());
         }
     }
-
-    /*@Override
-    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
-                                Throwable exception) {
-        throw new ChatSessionException(exception);
-    }*/
 
 }

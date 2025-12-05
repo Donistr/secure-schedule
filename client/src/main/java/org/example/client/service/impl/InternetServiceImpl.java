@@ -28,6 +28,7 @@ public class InternetServiceImpl implements InternetService {
         }
 
         System.out.printf("%s - интернет выключен%n", LocalDateTime.now());
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ignored) {
@@ -45,6 +46,7 @@ public class InternetServiceImpl implements InternetService {
         }
 
         System.out.printf("%s - интернет включен%n", LocalDateTime.now());
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException ignored) {
