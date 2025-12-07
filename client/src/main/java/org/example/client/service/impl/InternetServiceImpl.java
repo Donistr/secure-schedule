@@ -29,13 +29,13 @@ public class InternetServiceImpl implements InternetService {
 
         System.out.printf("%s - интернет выключен%n", LocalDateTime.now());
 
-        try {
+        /*try {
             Thread.sleep(2000);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
-        }
+        }*/
 
-        //runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -ne 'Disabled'} | Disable-NetAdapter -Confirm:$false");
+        runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -ne 'Disabled'} | Disable-NetAdapter -Confirm:$false");
         changeState(InternetState.DISABLED);
     }
 
@@ -47,14 +47,14 @@ public class InternetServiceImpl implements InternetService {
 
         System.out.printf("%s - интернет включен%n", LocalDateTime.now());
 
-        try {
+        /*try {
             Thread.sleep(2000);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
-        }
+        }*/
 
-        /*runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -eq 'Disabled'} | Enable-NetAdapter -Confirm:$false");
-        waitInternetAccess();*/
+        runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -eq 'Disabled'} | Enable-NetAdapter -Confirm:$false");
+        waitInternetAccess();
         changeState(InternetState.ENABLED);
     }
 
