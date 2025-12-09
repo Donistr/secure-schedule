@@ -24,7 +24,7 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
                 startTime,
                 startTime.plusYears(2),
                 new ArrayList<>(List.of(
-                        new TimePeriodDto(startTime, startTime.plusYears(1))
+                        new TimePeriodDto(startTime, startTime.plusYears(2))
                 )
                 )));
         /*LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 15, 30, 0);
