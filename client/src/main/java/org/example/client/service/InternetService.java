@@ -1,6 +1,6 @@
 package org.example.client.service;
 
-import org.example.client.internet.InternetState;
+import org.example.client.event.internet.InternetState;
 
 public interface InternetService {
 

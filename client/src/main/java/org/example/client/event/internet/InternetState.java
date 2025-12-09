@@ -1,4 +1,4 @@
-package org.example.client.internet;
+package org.example.client.event.internet;
 
 public enum InternetState {
 

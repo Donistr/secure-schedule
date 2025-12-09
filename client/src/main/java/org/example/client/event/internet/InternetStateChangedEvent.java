@@ -1,4 +1,4 @@
-package org.example.client.internet;
+package org.example.client.event.internet;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;

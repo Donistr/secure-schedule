@@ -1,9 +1,9 @@
 package org.example.client.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.client.internet.InternetState;
+import org.example.client.event.internet.InternetState;
 import org.example.client.exception.RunCommandException;
-import org.example.client.internet.InternetStateChangedEvent;
+import org.example.client.event.internet.InternetStateChangedEvent;
 import org.example.client.service.InternetService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
