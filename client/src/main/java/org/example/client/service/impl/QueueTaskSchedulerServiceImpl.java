@@ -93,8 +93,12 @@ public class QueueTaskSchedulerServiceImpl implements QueueTaskSchedulerService 
     @SneakyThrows
     private void runLoop() {
         while (running) {
-            ScheduledTask task = delayQueue.take();
-            task.runnable.run();
+            try {
+                ScheduledTask task = delayQueue.take();
+                task.runnable.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
