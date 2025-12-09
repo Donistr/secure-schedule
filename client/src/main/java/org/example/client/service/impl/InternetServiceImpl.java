@@ -27,7 +27,7 @@ public class InternetServiceImpl implements InternetService {
             return;
         }
 
-        System.out.printf("%s - интернет выключен%n", LocalDateTime.now());
+        System.out.printf("%s - интернет выключается%n", LocalDateTime.now());
 
         /*try {
             Thread.sleep(2000);
@@ -37,6 +37,8 @@ public class InternetServiceImpl implements InternetService {
 
         runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -ne 'Disabled'} | Disable-NetAdapter -Confirm:$false");
         changeState(InternetState.DISABLED);
+
+        System.out.printf("%s - интернет выключен%n", LocalDateTime.now());
     }
 
     @Override
@@ -45,7 +47,7 @@ public class InternetServiceImpl implements InternetService {
             return;
         }
 
-        System.out.printf("%s - интернет включен%n", LocalDateTime.now());
+        System.out.printf("%s - интернет включается%n", LocalDateTime.now());
 
         /*try {
             Thread.sleep(2000);
@@ -56,6 +58,8 @@ public class InternetServiceImpl implements InternetService {
         runCommand("powershell", "-Command", "Get-NetAdapter | Where-Object {$_.Status -eq 'Disabled'} | Enable-NetAdapter -Confirm:$false");
         waitInternetAccess();
         changeState(InternetState.ENABLED);
+
+        System.out.printf("%s - интернет включен%n", LocalDateTime.now());
     }
 
     @Override
