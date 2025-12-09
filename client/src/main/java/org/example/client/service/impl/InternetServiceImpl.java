@@ -9,8 +9,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -82,8 +85,7 @@ public class InternetServiceImpl implements InternetService {
     private void waitInternetAccess() {
         boolean available = false;
         while (!available) {
-            System.out.println(LocalDateTime.now());
-            System.out.println("try");
+            System.out.println(LocalDateTime.now() + " - try");
             available = isInternetAvailable();
             try {
                 Thread.sleep(500);
@@ -94,9 +96,16 @@ public class InternetServiceImpl implements InternetService {
     }
 
     private boolean isInternetAvailable() {
-        try (DatagramSocket socket = new DatagramSocket()) {
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10053);
-            return true;
+        try (HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3))
+                .build()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://clients3.google.com/generate_204"))
+                    .timeout(Duration.ofSeconds(4))
+                    .GET()
+                    .build();
+            HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+            return response.statusCode() == 204;
         } catch (Exception ignored) {
             return false;
         }

@@ -14,8 +14,7 @@ public class ChatClientFactoryImpl implements ChatClientFactory {
 
     @Override
     public ChatClient create() {
-        return new ChatClientImpl(config, new SessionHandler(config)
-        );
+        return new ChatClientImpl(config, new SessionHandler(config));
     }
 
 }

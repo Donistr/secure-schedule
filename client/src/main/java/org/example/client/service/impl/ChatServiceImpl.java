@@ -32,7 +32,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Synchronized
     public void sendMessage(String receiverName, String message) {
-        if (internetService.getState() == InternetState.ENABLED && client.isEmpty()) {
+        if (internetService.getState() == InternetState.ENABLED && client.map(c -> !c.isConnected()).orElse(true)) {
             client = createClient();
         }
 
@@ -60,7 +60,8 @@ public class ChatServiceImpl implements ChatService {
     private Optional<ChatClient> createClient() {
         try {
             return Optional.of(chatClientFactory.create());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         return Optional.empty();

@@ -63,4 +63,9 @@ public class ChatClientImpl implements ChatClient {
         }
     }
 
+    @Override
+    public boolean isConnected() {
+        return session.isConnected();
+    }
+
 }
