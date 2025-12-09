@@ -19,27 +19,39 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
 
     @PostConstruct
     private void init() {
-        LocalDateTime time = LocalDateTime.of(2025, 12, 9, 15, 23, 0);
+        LocalDateTime startTime = LocalDateTime.of(2024, 12, 9, 15, 30, 0);
         nameToSchedule.put("1", new ScheduleDto(
-                time,
-                time.plusMinutes(5),
+                startTime,
+                startTime.plusYears(2),
                 new ArrayList<>(List.of(
-                        new TimePeriodDto(time.plusSeconds(30), time.plusMinutes(1)),
-                        new TimePeriodDto(time.plusMinutes(1).plusSeconds(50), time.plusMinutes(2).plusSeconds(10)),
-                        new TimePeriodDto(time.plusMinutes(3), time.plusMinutes(3).plusSeconds(45)),
-                        new TimePeriodDto(time.plusMinutes(4), time.plusMinutes(4).plusSeconds(20))
+                        new TimePeriodDto(startTime, startTime.plusYears(1))
+                )
+                )));
+        /*LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 15, 30, 0);
+        nameToSchedule.put("1", new ScheduleDto(
+                startTime,
+                startTime.plusMinutes(5),
+                new ArrayList<>(List.of(
+                        new TimePeriodDto(startTime.plusSeconds(30), startTime.plusMinutes(1)),
+                        new TimePeriodDto(startTime.plusMinutes(1).plusSeconds(50), startTime.plusMinutes(2).plusSeconds(10)),
+                        new TimePeriodDto(startTime.plusMinutes(3), startTime.plusMinutes(3).plusSeconds(45)),
+                        new TimePeriodDto(startTime.plusMinutes(4), startTime.plusMinutes(4).plusSeconds(20))
                 )
         )));
         nameToSchedule.put("2", new ScheduleDto(
-                time,
-                time.plusMinutes(3),
+                startTime,
+                startTime.plusMinutes(3),
                 new ArrayList<>(List.of(
-                        new TimePeriodDto(time.plusSeconds(30), time.plusMinutes(1)),
-                        new TimePeriodDto(time.plusMinutes(1).plusSeconds(15), time.plusMinutes(1).plusSeconds(30)),
-                        new TimePeriodDto(time.plusMinutes(2), time.plusMinutes(2).plusSeconds(10))
+                        new TimePeriodDto(startTime.plusSeconds(30), startTime.plusMinutes(1)),
+                        new TimePeriodDto(startTime.plusMinutes(1).plusSeconds(15), startTime.plusMinutes(1).plusSeconds(30)),
+                        new TimePeriodDto(startTime.plusMinutes(2), startTime.plusMinutes(2).plusSeconds(10))
                 )
-        )));
-        System.out.println(nameToSchedule);
+        )));*/
+
+        nameToSchedule.forEach((name, schedule) -> {
+            System.out.println(name + ": " + schedule.from() + " --- " + schedule.to());
+            schedule.internetActivePeriods().forEach(period -> System.out.println("\t" + period.from() + " --- " + period.to()));
+        });
     }
 
     @Override
