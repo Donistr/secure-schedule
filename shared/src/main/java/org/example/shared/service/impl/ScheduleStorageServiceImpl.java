@@ -19,15 +19,7 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
 
     @PostConstruct
     private void init() {
-        LocalDateTime startTime = LocalDateTime.of(2024, 12, 9, 15, 30, 0);
-        nameToSchedule.put("1", new ScheduleDto(
-                startTime,
-                startTime.plusYears(2),
-                new ArrayList<>(List.of(
-                        new TimePeriodDto(startTime, startTime.plusYears(2))
-                )
-                )));
-        /*LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 15, 30, 0);
+        LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 19, 0, 0);
         nameToSchedule.put("1", new ScheduleDto(
                 startTime,
                 startTime.plusMinutes(5),
@@ -46,7 +38,7 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
                         new TimePeriodDto(startTime.plusMinutes(1).plusSeconds(15), startTime.plusMinutes(1).plusSeconds(30)),
                         new TimePeriodDto(startTime.plusMinutes(2), startTime.plusMinutes(2).plusSeconds(10))
                 )
-        )));*/
+        )));
 
         nameToSchedule.forEach((name, schedule) -> {
             System.out.println(name + ": " + schedule.from() + " --- " + schedule.to());
