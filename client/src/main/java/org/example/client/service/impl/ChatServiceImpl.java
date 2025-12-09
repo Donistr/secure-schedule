@@ -11,8 +11,6 @@ import org.example.client.internet.InternetStateChangedEvent;
 import org.example.client.service.ChatService;
 import org.example.client.service.InternetService;
 import org.example.shared.dto.MessageDto;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -44,9 +42,8 @@ public class ChatServiceImpl implements ChatService {
                 ));
     }
 
-    @EventListener
-    @Async
     @Synchronized
+    @Override
     public void handleInternetStateChange(InternetStateChangedEvent event) {
         switch (event.getCurrentState()) {
             case ENABLED -> client = createClient();
