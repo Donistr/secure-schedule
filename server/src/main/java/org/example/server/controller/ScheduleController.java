@@ -22,7 +22,7 @@ public class ScheduleController {
 
     @GetMapping
     public ResponseEntity<ScheduleDto> getSchedule(@RequestParam("name") String name) {
-        return ResponseEntity.ok(scheduleService.get(name));
+        return ResponseEntity.ok(scheduleService.get(name).orElse(null));
     }
 
     @PostMapping

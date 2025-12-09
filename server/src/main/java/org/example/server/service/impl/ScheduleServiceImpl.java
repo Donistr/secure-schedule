@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,8 +56,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleDto get(String name) {
-        return nameToSchedule.get(name);
+    public Optional<ScheduleDto> get(String name) {
+        return Optional.ofNullable(nameToSchedule.get(name));
     }
 
     @Override
