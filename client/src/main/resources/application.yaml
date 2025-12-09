@@ -7,7 +7,7 @@ server:
 
 app:
   server-scheme: "http"
-  server-host: "127.0.0.1"
+  server-host: "192.168.0.207"
   server-port: 8080
   server-websocket-client-name-query-param-name: "name"
   server-websocket-destination: "/ws"
