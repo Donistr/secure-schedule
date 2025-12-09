@@ -28,9 +28,13 @@ public class UserHandshakeInterceptor implements HandshakeInterceptor {
 
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
 
+    private UserService userService;
+
     @Autowired
     @Lazy
-    private UserService userService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
