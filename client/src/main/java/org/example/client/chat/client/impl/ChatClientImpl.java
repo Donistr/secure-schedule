@@ -50,11 +50,6 @@ public class ChatClientImpl implements ChatClient {
     }
 
     @Override
-    public void disconnect() {
-        session.disconnect();
-    }
-
-    @Override
     public void sendMessage(MessageDto message) {
         try {
             session.send(config.serverSendMessageDestination(), message);
