@@ -19,7 +19,7 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
 
     @PostConstruct
     private void init() {
-        LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 19, 13, 0);
+        LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 19, 14, 0);
         nameToSchedule.put("1", new ScheduleDto(
                 startTime,
                 startTime.plusMinutes(5),
