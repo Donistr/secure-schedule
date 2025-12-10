@@ -19,26 +19,26 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
 
     @PostConstruct
     private void init() {
-        LocalDateTime startTime = LocalDateTime.of(2025, 12, 9, 21, 36, 0);
+        LocalDateTime startTime = LocalDateTime.of(2025, 12, 10, 14, 37, 0);
         nameToSchedule.put("1", new ScheduleDto(
                 startTime,
-                startTime.plusMinutes(5),
+                startTime.plusMinutes(10),
                 new ArrayList<>(List.of(
-                        new TimePeriodDto(startTime.plusSeconds(30), startTime.plusMinutes(1)),
-                        new TimePeriodDto(startTime.plusMinutes(1).plusSeconds(50), startTime.plusMinutes(2).plusSeconds(10)),
-                        new TimePeriodDto(startTime.plusMinutes(3), startTime.plusMinutes(3).plusSeconds(45)),
-                        new TimePeriodDto(startTime.plusMinutes(4), startTime.plusMinutes(4).plusSeconds(20))
+                        new TimePeriodDto(startTime.plusMinutes(1), startTime.plusMinutes(2)),
+                        new TimePeriodDto(startTime.plusMinutes(3), startTime.plusMinutes(4)),
+                        new TimePeriodDto(startTime.plusMinutes(5), startTime.plusMinutes(6)),
+                        new TimePeriodDto(startTime.plusMinutes(7), startTime.plusMinutes(8))
                 )
-        )));
+                )));
         nameToSchedule.put("2", new ScheduleDto(
                 startTime,
-                startTime.plusMinutes(3),
+                startTime.plusMinutes(8),
                 new ArrayList<>(List.of(
-                        new TimePeriodDto(startTime.plusSeconds(30), startTime.plusMinutes(1)),
-                        new TimePeriodDto(startTime.plusMinutes(1).plusSeconds(15), startTime.plusMinutes(1).plusSeconds(30)),
-                        new TimePeriodDto(startTime.plusMinutes(2), startTime.plusMinutes(2).plusSeconds(10))
+                        new TimePeriodDto(startTime.plusMinutes(1), startTime.plusMinutes(2)),
+                        new TimePeriodDto(startTime.plusMinutes(4), startTime.plusMinutes(5)),
+                        new TimePeriodDto(startTime.plusMinutes(5), startTime.plusMinutes(5).plusSeconds(40))
                 )
-        )));
+                )));
 
         nameToSchedule.forEach((name, schedule) -> {
             System.out.println(name + ": " + schedule.from() + " --- " + schedule.to());
