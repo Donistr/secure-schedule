@@ -8,6 +8,4 @@ public interface ScheduleService {
 
     Optional<ScheduleDto> get(String name);
 
-    void set(String name, ScheduleDto schedule);
-
 }

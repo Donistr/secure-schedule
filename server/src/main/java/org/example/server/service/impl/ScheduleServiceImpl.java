@@ -28,9 +28,4 @@ public class ScheduleServiceImpl implements ScheduleService {
         return Optional.ofNullable(nameToSchedule.get(name));
     }
 
-    @Override
-    public void set(String name, ScheduleDto schedule) {
-        nameToSchedule.put(name, schedule);
-    }
-
 }
