@@ -21,20 +21,6 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
     private void init() {
         LocalDateTime startTime = LocalDateTime.of(2025, 12, 12, 11, 45, 0);
         nameToSchedule.put("1", new ScheduleDto(
-                startTime.minusYears(1),
-                startTime.plusYears(1),
-                new ArrayList<>(List.of(
-                        new TimePeriodDto(startTime.minusYears(1), startTime.plusYears(1))
-                )
-                )));
-        nameToSchedule.put("2", new ScheduleDto(
-                startTime.minusYears(1),
-                startTime.plusYears(1),
-                new ArrayList<>(List.of(
-                        new TimePeriodDto(startTime.minusYears(1), startTime.plusYears(1))
-                )
-                )));
-        /*nameToSchedule.put("1", new ScheduleDto(
                 startTime,
                 startTime.plusMinutes(10),
                 new ArrayList<>(List.of(
@@ -51,6 +37,20 @@ public class ScheduleStorageServiceImpl implements ScheduleStorageService {
                         new TimePeriodDto(startTime.plusMinutes(1), startTime.plusMinutes(2)),
                         new TimePeriodDto(startTime.plusMinutes(4), startTime.plusMinutes(5)),
                         new TimePeriodDto(startTime.plusMinutes(5), startTime.plusMinutes(5).plusSeconds(40))
+                )
+                )));
+        /*nameToSchedule.put("1", new ScheduleDto(
+                startTime.minusYears(1),
+                startTime.plusYears(1),
+                new ArrayList<>(List.of(
+                        new TimePeriodDto(startTime.minusYears(1), startTime.plusYears(1))
+                )
+                )));
+        nameToSchedule.put("2", new ScheduleDto(
+                startTime.minusYears(1),
+                startTime.plusYears(1),
+                new ArrayList<>(List.of(
+                        new TimePeriodDto(startTime.minusYears(1), startTime.plusYears(1))
                 )
                 )));*/
 
